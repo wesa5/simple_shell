@@ -24,7 +24,7 @@ void shell(int ac, char **av, char **env)
 		flow = bridge(args[0], args);
 		if (flow == 2)
 		{
-			filename =args[0];
+			filename = args[0];
 			args[0] = find_path(args[0], tmp, er);
 			if (args[0] == er)
 			{
