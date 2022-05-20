@@ -1,4 +1,4 @@
-#include "main.h"
+#include "shell.h"
 /**
  * _getenv - gets env of input
  * @env: input
