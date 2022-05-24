@@ -1,4 +1,4 @@
-#include "header.h"
+#include "main.h"
 /**
  * prompt - function that prints '$' to standard output
  */
