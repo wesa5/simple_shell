@@ -1,47 +1,59 @@
-#include "shell.h"
-/**
- * shell - Infinite loop that runs shell
- * @ac: Arg count
- * @av: args passed to shell at beginning of prog
- * @env: Environment
- * Return: Void
- */
-void shell(int ac, char **av, char **env)
-{
-	char *line;
-	char **args;
-	int status = 1;
-	char *tmp = NULL;
-	char *er;
-	char *filename;
-	int flow;
+#include "main.h"
 
-	er = "Error";
-	do {
-		prompt();
-		line = _getline();
-		args = split_line(line);
-		flow = bridge(args[0], args);
-		if (flow == 2)
+/**
+ * main - Entry point to program
+ * @argc: Argument count
+ * @argv: Argument vector
+ * Return: Returns condition
+ */
+
+int main(__attribute__((unused)) int argc, char **argv)
+{
+	char *input, **cmd, **commands;
+	int count = 0, i, condition = 1, stat = 0;
+
+	if (argv[1] != NULL)
+		read_file(argv[1], argv);
+	signal(SIGINT, signal_to_handle);
+
+	while (condition)
+	{
+		count++;
+		if (isatty(STDIN_FILENO))
+			prompt();
+		input = _getline();
+		if (input[0] == '\0')
+			continue;
+		history(input);
+		commands = separator(input);
+		for (i = 0; commands[i] != NULL; i++)
 		{
-			filename = args[0];
-			args[0] = find_path(args[0], tmp, er);
-			if (args[0] == er)
+			cmd = parse_cmd(commands[i]);
+			if (_strcmp(cmd[0], "exit") == 0)
 			{
-				args[0] = search_cwd(filename, er);
-				if (args[0] == filename)
-					write(1, er, 5);
+				free(commands);
+				exit_bul(cmd, input, argv, count, stat);
 			}
+			else if (check_builtin(cmd) == 0)
+			{
+				stat = handle_builtin(cmd, stat);
+				free(cmd);
+				continue;
+			}
+			else
+			{
+				stat = check_cmd(cmd, input, count, argv);
+			}
+			/*if (commands[i + 1] == NULL)
+			{
+				free(commands);
+				break;
+			}*/
+			free(cmd);
 		}
-		if (args[0] != er)
-			status = execute_prog(args, line, env, flow);
-		free(line);
-		free(args);
-	} while (status);
-	if (!ac)
-		(void)ac;
-	if (!av)
-		(void)av;
-	if (!env)
-		(void)env;
+		free(input);
+		free(commands);
+		wait(&stat);
+	}
+	return (stat);
 }
