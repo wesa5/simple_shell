@@ -1,4 +1,4 @@
-#include "shell.h"
+#include "main.h"
 
 /**
  * execute_prog - Executes binary or builtin
