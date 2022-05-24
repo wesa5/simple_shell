@@ -1,4 +1,4 @@
-#include "header.h"
+#include "main.h"
 
 /**
  * create_envi - Creates an array of Enviroment Variables
